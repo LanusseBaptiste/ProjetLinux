@@ -1,0 +1,1 @@
+{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"/Users/baptiste/Documents/cours/Linux/Alan Simon/trashDir/ProjetLinux/machinesDev","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}}}
