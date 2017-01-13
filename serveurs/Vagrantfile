@@ -1,0 +1,99 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("3") do |config|
+  config.vm.define "version11" do |version11|
+    version11.vm.box = "centos/7"
+    version11.vm.box_check_update = false
+    version11.vm.network "private_network", ip: "192.168.55.41"
+    version11.vm.hostname = "version1-1"
+    version11.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.memory = "512"
+    end
+    version11.vm.provision "shell", inline: <<-SHELL
+      localectl set-keymap fr
+      useradd hubert
+      echo fraise | passwd hubert --stdin
+      usermod -aG wheel hubert
+      yum provides ifconfig
+      yum -y install net-tools
+      echo -e "\n192.168.55.40 git-host\n" >> /etc/hosts
+      curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.rpm.sh |  bash
+      yum -y install gitlab-ci-multi-runner
+      sudo rpm -iUvh http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+      yum install epel-release
+      sudo yum -y update
+      sudo yum -y upgrade
+      sudo yum -y install httpd
+      systemctl start httpd.service
+      systemctl enable httpd.service
+      sudo yum -y install php php-mysql php-pdo php-gd php-mbstring
+      echo "<?php phpinfo(); ?>" > /var/www/html/info.php
+      systemctl restart httpd.service
+      sudo yum -y install mariadb-server mariadb
+      systemctl start mariadb
+      systemctl enable mariadb
+      sudo yum -y install phpmyadmin
+      echo "$(hostname) up"
+    SHELL
+  end
+  config.vm.define "version21" do |version21|
+    version21.vm.box = "centos/7"
+    version21.vm.box_check_update = false
+    version21.vm.network "private_network", ip: "192.168.55.42"
+    version21.vm.hostname = "version2-1"
+    version21.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.memory = "512"
+    end
+    version21.vm.provision "shell", inline: <<-SHELL
+      localectl set-keymap fr
+      useradd hubert
+      echo fraise | passwd hubert --stdin
+      usermod -aG wheel hubert
+      yum provides ifconfig
+      yum -y install net-tools
+      echo -e "\n192.168.55.40 git-host\n" >> /etc/hosts
+      curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.rpm.sh |  bash
+      yum -y install gitlab-ci-multi-runner
+      sudo yum update
+      sudo yum upgrade
+      yum -y install epel-release
+      yum -y install nodejs-6.9.1
+      echo "$(hostname) up"
+    SHELL
+  end
+  config.vm.define "version30" do |version30|
+    version30.vm.box = "centos/7"
+    version30.vm.box_check_update = false
+    version30.vm.network "private_network", ip: "192.168.55.43"
+    version30.vm.hostname = "version3-0"
+    version30.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.memory = "512"
+    end
+    version30.vm.provision "shell", inline: <<-SHELL
+      localectl set-keymap fr
+      useradd hubert
+      echo fraise | passwd hubert --stdin
+      usermod -aG wheel hubert
+      sudo yum provides ifconfig
+      sudo yum -y install net-tools
+      echo -e "\n192.168.55.40 git-host\n" >> /etc/hosts
+      curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.rpm.sh |  bash
+      sudo yum -y install gitlab-ci-multi-runner
+      sudo yum -y install -y git-core zlib zlib-devel gcc-c++ patch readline readline-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison sqlite-devel
+      cd
+      git clone git://github.com/sstephenson/rbenv.git .rbenv
+      echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> /home/hubert/.bash_profile
+      echo 'eval "$(rbenv init -)"' >> /home/hubert/.bash_profile
+      source /home/hubert/.bash_profile
+      git clone git://github.com/sstephenson/ruby-build.git /home/hubert/.rbenv/plugins/ruby-build
+      echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> /home/hubert/.bash_profile
+      source /home/hubert/.bash_profile
+      runuser -l hubert -c 'rbenv install -v 2.4.0'
+      runuser -l hubert -c 'rbenv global 2.4.0'
+      echo "$(hostname) up"
+    SHELL
+  end
+end
