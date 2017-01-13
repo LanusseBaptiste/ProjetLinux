@@ -1,0 +1,44 @@
+# -*- mode: ruby -*-
+# vi: set fr=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.define "devNode" do |dev1|
+    dev1.vm.box = "centos/7"
+    dev1.vm.box_check_update = false
+    dev1.vm.network "private_network", ip: "192.168.56.202"
+    dev1.vm.hostname = "devMachine"
+    dev1.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.memory = "512"
+    end
+    dev1.vm.provision "shell", inline: <<-SHELL
+      sudo yum groupinstall -y "GNOME Desktop" "Graphical Administration Tools"
+      sudo ln -sf /lib/systemd/system/runlevel5.target /etc/systemd/system/default.target
+      localectl set-keymap fr
+      sudo wget http://c758482.r82.cf2.rackcdn.com/sublime_text_3_build_3083_x64.tar.bz2
+      sudo tar vxjf sublime_text_3_build_3083_x64.tar.bz2
+      sudo mv sublime_text_3 /opt/
+      sudo ln -s /opt/sublime_text_3/sublime_text /home/vagrant/Desktop/Sublime\ Text
+      sudo rm -rf sublime_text_3_build_3083_x64.tar.bz2
+      sudo yum install -y epel-release
+      sudo yum install -y nodejs
+      sudo yum install -y npm
+      sudo init 0
+    SHELL
+  end
+  config.vm.define "devPHP" do |dev2|
+    dev2.vm.box = "centos/7"
+    dev2.vm.box_check_update = false
+    dev2.vm.network "private_network", ip: "192.168.56.203"
+    dev2.vm.hostname = "devMachine"
+    dev2.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.memory = "512"
+    end
+    dev2.vm.provision "shell", inline: <<-SHELL
+      sudo yum groupinstall -y "GNOME Desktop" "Graphical Administration Tools"
+      sudo ln -sf /lib/systemd/system/runlevel5.target /etc/systemd/system/default.target
+      localectl set-keymap fr
+      sudo init 0
+    SHELL
+  end
+end

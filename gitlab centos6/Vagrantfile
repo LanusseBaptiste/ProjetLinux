@@ -1,0 +1,32 @@
+# -*- mode: ruby -*-
+# vi: set fr=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.define "server" do |server|
+    server.vm.box = "centos/6"
+    server.vm.box_check_update = false
+    server.vm.network "private_network", ip: "192.168.56.200"
+    server.vm.hostname = "server"
+    server.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.memory = "1024"
+    end
+    server.vm.provision "shell", inline: <<-SHELL
+      yum -y install curl openssh-server openssh-clients postfix cronie
+      chkconfig postfix on
+      service postfix start
+      lokkit -s http -s ssh
+      curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | bash
+      yum -y install gitlab-ce
+      gitlab-ctl reconfigure
+      loadkeys fr
+      sudo rm -rf /etc/sysconfig/keyboard
+      echo "KEYTABLE=\"fr\"" >> keyboard
+      echo "MODEL=\"pc105+inet\"" >> keyboard
+      echo "LAYOUT=\"fr\"" >> keyboard
+      echo "KEYBOARDTYPE=\"pc\"" >> keyboard
+      sudo mv keyboard /etc/sysconfig/keyboard
+      echo "$(hostname) up"
+      sudo init 0
+    SHELL
+  end
+end
