@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.define "git-host" do |githost|
+    githost.vm.box = "centos/7"
+    githost.vm.box_check_update = false
+    githost.vm.network "private_network", ip: "192.168.55.40"
+    githost.vm.hostname = "git-host"
+    githost.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.memory = "2048"
+    end
+    githost.vm.provision "shell", inline: <<-SHELL
+      localectl set-keymap fr
+      useradd hubert
+      echo fraise | passwd hubert --stdin
+      usermod -aG wheel hubert
+      yum provides ifconfig
+      yum -y install net-tools
+      yum -y install curl openssh-server openssh-clients postfix cronie
+      chkconfig postfix on
+      service postfix start
+      lokkit -s http -s ssh
+      curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | bash
+      yum -y install gitlab-ce
+      gitlab-ctl reconfigure
+      echo "$(hostname) up"
+    SHELL
+  end
+end
