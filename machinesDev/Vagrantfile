@@ -49,6 +49,16 @@ Vagrant.configure("2") do |config|
       sudo mv sublime_text_3 /opt/
       sudo ln -s /opt/sublime_text_3/sublime_text /home/developer/Desktop/SublimeText
       sudo rm -rf sublime_text_3_build_3083_x64.tar.bz2
+      sudo yum -y update
+      sudo yum -y install epel-release
+      sudo wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+      sudo wget https://centos7.iuscommunity.org/ius-release.rpm
+      sudo rpm -Uvh ius-release*.rpm
+      sudo yum -y update
+      sudo yum -y install php56u php56u-opcache php56u-xml php56u-mcrypt php56u-gd php56u-devel php56u-mysql php56u-intl php56u-mbstring
+      sudo mkdir -p /usr/local/bin
+      sudo curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony
+      sudo chmod a+x /usr/local/bin/symfony
       sudo init 0
     SHELL
   end
@@ -73,6 +83,20 @@ Vagrant.configure("2") do |config|
       sudo mv sublime_text_3 /opt/
       sudo ln -s /opt/sublime_text_3/sublime_text /home/developer/Desktop/SublimeText
       sudo rm -rf sublime_text_3_build_3083_x64.tar.bz2
+      sudo yum install -y git-core zlib zlib-devel gcc-c++ patch readline readline-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison curl sqlite-devel
+      sudo git clone git://github.com/sstephenson/rbenv.git .rbenv
+      sudo echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
+      sudo echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
+      sudo exec $SHELL
+      sudo git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+      sudo echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bash_profile
+      sudo exec $SHELL
+      source ~/.bash_profile
+      rbenv install -v 2.2.1
+      rbenv global 2.2.1
+      gem install bundler
+      gem install rails -v 4.2.0
+      rbenv rehash
       sudo init 0
     SHELL
   end
