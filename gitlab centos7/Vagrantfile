@@ -18,8 +18,8 @@ Vagrant.configure("2") do |config|
       yum provides ifconfig
       yum -y install net-tools
       yum -y install curl openssh-server openssh-clients postfix cronie
-      chkconfig postfix on
-      service postfix start
+      sudo chkconfig postfix on
+      sudo service postfix start
       lokkit -s http -s ssh
       curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | bash
       yum -y install gitlab-ce
