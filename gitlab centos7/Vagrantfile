@@ -11,16 +11,16 @@ Vagrant.configure("2") do |config|
       vb.memory = "2048"
     end
     githost.vm.provision "shell", inline: <<-SHELL
+      yum -y install curl openssh-server openssh-clients postfix cronie
+      chkconfig postfix on
+      service postfix start
+      lokkit -s http -s ssh
       localectl set-keymap fr
       useradd hubert
       echo fraise | passwd hubert --stdin
       usermod -aG wheel hubert
       yum provides ifconfig
       yum -y install net-tools
-      yum -y install curl openssh-server openssh-clients postfix cronie
-      sudo chkconfig postfix on
-      sudo service postfix start
-      lokkit -s http -s ssh
       curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | bash
       yum -y install gitlab-ce
       gitlab-ctl reconfigure

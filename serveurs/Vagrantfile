@@ -11,6 +11,10 @@ Vagrant.configure("2") do |config|
       vb.memory = "512"
     end
     version11.vm.provision "shell", inline: <<-SHELL
+      yum -y install curl openssh-server openssh-clients postfix cronie
+      chkconfig postfix on
+      service postfix start
+      lokkit -s http -s ssh
       localectl set-keymap fr
       useradd hubert
       echo fraise | passwd hubert --stdin
@@ -47,6 +51,10 @@ Vagrant.configure("2") do |config|
       vb.memory = "512"
     end
     version21.vm.provision "shell", inline: <<-SHELL
+      yum -y install curl openssh-server openssh-clients postfix cronie
+      chkconfig postfix on
+      service postfix start
+      lokkit -s http -s ssh
       localectl set-keymap fr
       useradd hubert
       echo fraise | passwd hubert --stdin
@@ -73,6 +81,10 @@ Vagrant.configure("2") do |config|
       vb.memory = "512"
     end
     version30.vm.provision "shell", inline: <<-SHELL
+      yum -y install curl openssh-server openssh-clients postfix cronie
+      chkconfig postfix on
+      service postfix start
+      lokkit -s http -s ssh
       localectl set-keymap fr
       useradd hubert
       echo fraise | passwd hubert --stdin
@@ -83,14 +95,13 @@ Vagrant.configure("2") do |config|
       curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.rpm.sh |  bash
       sudo yum -y install gitlab-ci-multi-runner
       sudo yum -y install -y git-core zlib zlib-devel gcc-c++ patch readline readline-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison sqlite-devel
-      cd
-      git clone git://github.com/sstephenson/rbenv.git .rbenv
-      echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> /home/hubert/.bash_profile
-      echo 'eval "$(rbenv init -)"' >> /home/hubert/.bash_profile
-      source /home/hubert/.bash_profile
-      git clone git://github.com/sstephenson/ruby-build.git /home/hubert/.rbenv/plugins/ruby-build
-      echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> /home/hubert/.bash_profile
-      source /home/hubert/.bash_profile
+      cd /home/hubert
+      sudo git clone git://github.com/sstephenson/rbenv.git .rbenv
+      sudo echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> /home/hubert/.bash_profile
+      sudo echo 'eval "$(rbenv init -)"' >> /home/hubert/.bash_profile
+      sudo git clone git://github.com/sstephenson/ruby-build.git /home/hubert/.rbenv/plugins/ruby-build
+      sudo echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> /home/hubert/.bash_profile
+      runuser -l hubert source /home/hubert/.bash_profile
       runuser -l hubert -c 'rbenv install -v 2.4.0'
       runuser -l hubert -c 'rbenv global 2.4.0'
       echo "$(hostname) up"
